@@ -1,14 +1,22 @@
 /// <reference path="../lib/typings/angular/angular.d.ts" />
-/// <reference path="directives.ts" />
-/// <reference path="controllers.ts" />
-
+/// <reference path="../lib/typings/requirejs/require.d.ts" />
 'use strict';
 
+export function start() {
+    // Declare app level module which depends on filters, and services
+    angular.module('testApp', []).
+        directive('testDirective', function() {
+            return {
+                template: '<div>HELLO!!!</div><br /><button ng-click="loadLate()">Load Late Module</button>',
+                link: function(scope) {
+                    scope.loadLate = function() {
+                        require(["late"], function(lateModule) {
+                            lateModule.init();
+                        });
+                    };
+                }
+            }
+        });
 
-// Declare app level module which depends on filters, and services
-angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers']).
-    config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
-        $routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
-        $routeProvider.otherwise({redirectTo: '/view1'});
-    }]);
+    angular.bootstrap(document.body, ['testApp']);
+}
