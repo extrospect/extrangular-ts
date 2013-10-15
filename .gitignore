@@ -1,2 +1,7 @@
 .idea/
 node_modules/
+app/ts/**.js
+app/ts/**.js.map
+test/unit/**.js
+test/unit/**.js.map
+config/karma.conf.js

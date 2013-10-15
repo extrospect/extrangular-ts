@@ -1,14 +1,15 @@
 module.exports = function (grunt) {
     var globalConfig = {
         sortedFiles: []
-    },
-        DEBUG = grunt.option('debug');
+    };
 
     grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-karma');
 
-    grunt.initConfig({
+    var userConfig = require( './build.config.js' );
+
+    var taskConfig = {
         shell: {
             options: {
                 stdout: true
@@ -25,13 +26,23 @@ module.exports = function (grunt) {
                 configFile: 'config/karma.conf.js'
             },
             unit: {
-                options: {
-                    files: globalConfig.sortedFiles
-                },
                 background: true
             },
             continuous: {
                 singleRun: true
+            }
+        },
+
+        /**
+         * This task compiles the karma template so that changes to its file array
+         * don't have to be managed manually.
+         */
+        karmaBuild: {
+            unit: {
+                src: [
+                    '<%= vendor_files.js %>',
+                    '<%= test_files.js %>'
+                ]
             }
         },
 
@@ -40,20 +51,28 @@ module.exports = function (grunt) {
                 livereload: true
             },
 
-            jssrc: {
+            // TODO: Reloading karma with a freshly created config when files are added or removed
+            /*
+            addRemove: {
                 files: [
-                    'app/ts/**.js'
+                    'app/ts/**.js',
+                    'test/unit/**Spec.js'
                 ],
-                tasks: [ 'orderFiles', 'karma:unit:run' ]
-            },
-
-            jsunit: {
-                files: [
-                    'test/unit/*Spec.js'
-                ],
-                tasks: [ 'orderFiles', 'karma:unit:run' ],
+                tasks: [ 'sortedKarmaStart' ],
                 options: {
-                    livereload: false
+                    event: ['added', 'deleted']
+                }
+            },*/
+
+            // If existing spec or source files get changed, then re-run the tests
+            change: {
+                files: [
+                    'app/ts/**.js',
+                    'test/unit/**Spec.js'
+                ],
+                tasks: [ 'karma:unit:run' ],
+                options: {
+                    event: ['changed']
                 }
             }
         },
@@ -62,18 +81,51 @@ module.exports = function (grunt) {
             files: {
                 src: [
                     'app/ts/**.js',
-                    'test/**/*.js'
+                    'test/unit/**/*.js'
                 ]
             }
         }
-    });
+    };
+
+    grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
 
     //defaults
-    grunt.registerTask('default', ['update']);
+    grunt.registerTask('default', ['update', 'dev']);
 
     grunt.registerTask('update', ['shell:npm_install']);
 
-    grunt.registerTask( 'dev', ['karma:unit:start', 'watch'] );
+    grunt.registerTask( 'dev', ['sortedKarmaStart', 'watch'] );
+
+    grunt.registerTask( 'sortedKarmaBuild', ['orderFiles', 'karmaBuild'] );
+    grunt.registerTask( 'sortedKarmaStart', ['sortedKarmaBuild', 'karma:unit:start'] );
+
+    /**
+     * A utility function to get all app JavaScript sources.
+     */
+    function filterForJS ( files ) {
+        return files.filter( function ( file ) {
+            return file.match( /\.js$/ );
+        });
+    }
+
+    /**
+     * In order to avoid having to specify manually the files needed for karma to
+     * run, we use grunt to manage the list for us. The `karma/*` files are
+     * compiled as grunt templates for use by Karma. Yay!
+     */
+    grunt.registerMultiTask( 'karmaBuild', 'Process karma config templates', function () {
+        var jsFiles = filterForJS( this.filesSrc );
+        jsFiles = jsFiles.concat(globalConfig.sortedFiles);
+        grunt.file.copy( 'config/karma.conf.tpl.js', 'config/karma.conf.js', {
+            process: function ( contents, path ) {
+                return grunt.template.process( contents, {
+                    data: {
+                        scripts: jsFiles
+                    }
+                });
+            }
+        });
+    });
 
     /**
      *
@@ -169,18 +221,16 @@ module.exports = function (grunt) {
         }
 
         function debugPrintAllNodes() {
-            if(DEBUG) {
-                var nI = 0;
-                allNodes.forEach(function(node) {
-                    grunt.log.writeln('allNodes[' + nI++ + ']: ' + node.name);
-                    node.inEdges.forEach(function(inEdge) {
-                        grunt.log.writeln('\tIn Edge: ' + inEdge.name);
-                    });
-                    node.outEdges.forEach(function(outEdge) {
-                        grunt.log.writeln('\tOut Edge: ' + outEdge.name);
-                    });
+            var nI = 0;
+            allNodes.forEach(function(node) {
+                grunt.log.debug('allNodes[' + nI++ + ']: ' + node.name);
+                node.inEdges.forEach(function(inEdge) {
+                    grunt.log.debug('\tIn Edge: ' + inEdge.name);
                 });
-            }
+                node.outEdges.forEach(function(outEdge) {
+                    grunt.log.debug('\tOut Edge: ' + outEdge.name);
+                });
+            });
         }
 
         this.sortNodes = function() {
@@ -284,14 +334,10 @@ module.exports = function (grunt) {
         ts.importFiles(this.filesSrc);
 
         var sorted = ts.sortNodes();
-        sorted.reverse();
+        sorted.reverse();   // The order to load files in is the reverse of the sort order produced by the algorithm
 
-
-
-        if(DEBUG) {
-            grunt.log.writeln();
-            grunt.log.writeln('Sort completed.');
-        }
+        grunt.log.debug();
+        grunt.log.debug('Sort completed.');
 
         var cwd = process.cwd(),
             path = require('path');
@@ -300,10 +346,9 @@ module.exports = function (grunt) {
         sorted.forEach(function(node) {
             // make sorted paths relative to cwd
             var relativePath = path.relative(cwd, node.name);
+            relativePath = relativePath.replace(/\\/g, '/');
             globalConfig.sortedFiles.push(relativePath);
-            if(DEBUG) {
-                grunt.log.writeln(relativePath);
-            }
+            grunt.log.debug(relativePath);
         });
 
         if (this.errorCount) { return false; }
