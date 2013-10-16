@@ -1,5 +1,5 @@
-/// <reference path="../lib/typings/angular/angular.d.ts" />
-/// <reference path="../lib/typings/requirejs/require.d.ts" />
+/// <reference path="../../lib/typings/angular/angular.d.ts" />
+/// <reference path="../../lib/typings/requirejs/require.d.ts" />
 'use strict';
 
 export function start() {

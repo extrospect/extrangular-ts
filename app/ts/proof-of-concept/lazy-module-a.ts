@@ -1,4 +1,4 @@
-/// <reference path="../lib/typings/angular/angular.d.ts" />
+/// <reference path="../../lib/typings/angular/angular.d.ts" />
 
 export function init() {
     angular.module('lazyModuleA', [])
@@ -29,7 +29,7 @@ export function init() {
         }]);
 
         // create an injector to get at the compile, document, and rootScope services
-        // IMPORTANT: This has to be excuted against the root/application module (the parent of this module
+        // IMPORTANT: This has to be executed against the root/application module (the parent of this module
         // and the module that the injected services comes from
         var $injector = angular.injector(['ng', 'testApp']);
 
