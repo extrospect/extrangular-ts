@@ -9,21 +9,65 @@ define(["require", "exports"], function(require, exports) {
             'appService',
             '$document',
             function (appService, $document) {
-                var inputText = 'C:/Extrali/WebClient/AngularJS > ';
+                var inputText = 'C:/Extrali/WebClient/AngularJS> ';
                 return {
-                    template: '<div ng-repeat="command in commands">{{command}}</div>' + '<div><table><tr><td>' + inputText + '</td><td>' + '<form ng-submit="execCommand()"><input type="text" ' + 'ng-model="data.currentCommand" /></form></td></tr></table></div>',
-                    link: function (scope) {
+                    template: '<div ng-repeat="command in commands">' + '<span class="consoleText">{{command}}</span></div>' + '<div><table><tr><td>' + inputText + '</td><td>' + '<span class="consoleText">{{data.currentCommand}}</span>' + '<span class="blink">&nbsp;</span>' + '</td></tr></table></div>',
+                    link: function (scope, element) {
                         scope.commands = [];
 
                         scope.data = {
-                            currentCommand: ''
+                            currentCommand: ' '
                         };
+
+                        $document.bind('keyup', function (event) {
+                            var keyCode = event.keyCode, keyChar = String.fromCharCode(event.keyCode), shiftHeld = event.shiftKey, commandModification;
+
+                            if (keyChar.length) {
+                                if (keyCode >= 65 && keyCode <= 90) {
+                                    // A-Z
+                                    commandModification = (shiftHeld ? keyChar : keyChar.toLowerCase());
+                                } else if (keyCode >= 48 && keyCode <= 57) {
+                                    // 0-9
+                                    commandModification = (shiftHeld ? '' : keyChar);
+                                } else {
+                                    switch (keyCode) {
+                                        case 8:
+                                            // Backspace
+                                            commandModification = function () {
+                                                scope.data.currentCommand = scope.data.currentCommand.slice(0, -1);
+                                            };
+                                            break;
+                                        case 32:
+                                            // Space
+                                            commandModification = ' ';
+                                            break;
+                                        case 13:
+                                            // Return
+                                            commandModification = function () {
+                                                scope.execCommand();
+                                            };
+                                            break;
+                                    }
+                                }
+
+                                if (commandModification) {
+                                    scope.$apply(function () {
+                                        if (typeof commandModification === 'string') {
+                                            scope.data.currentCommand += commandModification;
+                                        } else {
+                                            commandModification();
+                                        }
+                                    });
+                                }
+                            }
+                        });
 
                         scope.execCommand = function () {
                             var command = scope.data.currentCommand;
                             scope.commands.push(inputText + command);
                             scope.data.currentCommand = '';
 
+                            command = command.trim();
                             switch (command) {
                                 case 'load pluginA':
                                     loadPluginA();
@@ -41,11 +85,23 @@ define(["require", "exports"], function(require, exports) {
                             }
 
                             function badCommand(command) {
-                                var errorMsg = '', pick = Math.floor(Math.random() * 0);
+                                var errorMsg = '', pick = Math.floor(Math.random() * 5);
 
                                 switch (pick) {
                                     case 0:
                                         errorMsg = 'Incorrect syntax near \'' + command + '\'';
+                                        break;
+                                    case 1:
+                                        errorMsg = 'Something went wrong';
+                                        break;
+                                    case 2:
+                                        errorMsg = 'null';
+                                        break;
+                                    case 3:
+                                        errorMsg = 'I\'m busy, come back later!';
+                                        break;
+                                    default:
+                                        errorMsg = '⸘⸘⸘Why did you do that‽‽‽';
                                         break;
                                 }
 
