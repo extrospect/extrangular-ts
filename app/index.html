@@ -1,15 +1,61 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title></title>
-    <script src="lib/angular/angular.js"></script>
-    <script data-main="ts/main" src="lib/requirejs/require.js"></script>
-</head>
-<body>
-Basic HTML
+    <head>
+        <title></title>
+        <script src="lib/angular/angular.js"></script>
+        <script data-main="ts/main" src="lib/requirejs/require.js"></script>
+    </head>
+    <body>
+        <div>
+            <ul>
+                <li>
+                    <h3>AppService</h3>
+                    <p>Multiplies the input value by 2</p>
+                </li>
+                <li>
+                    <h3>LazyServiceA</h3>
+                    <p>Multiplies the input value by 5</p>
+                </li>
+                <li>
+                    <h3>LazyServiceB</h3>
+                    <p>Multiplies the input value by 10</p>
+                </li>
+            </ul>
 
-<div data-test-directive></div>
+        </div>
+        <div data-test-directive></div>
 
-<div data-late-directive></div>
-</body>
+        <table>
+            <tr>
+                <th>App using services from App (control)</th>
+            </tr>
+            <tr>
+                <td><div data-app-directive></div></td>
+            </tr>
+            <tr>
+                <th>Lazy Module A using services from App</th>
+            </tr>
+            <tr>
+                <td><div data-lazy-directive-a></div></td>
+            </tr>
+            <tr>
+                <th>App using services from Lazy Module A</th>
+            </tr>
+            <tr>
+                <td><div data-lazy-app-directive></div></td>
+            </tr>
+            <tr>
+                <th>Lazy Module B using services from Lazy Module A</th>
+            </tr>
+            <tr>
+                <td><div data-lazy-directive-b></div></td>
+            </tr>
+            <tr>
+                <th>Lazy Module A using services from Lazy Module B</th>
+            </tr>
+            <tr>
+                <td><div data-lazy-directive-a2></div></td>
+            </tr>
+        </table>
+    </body>
 </html>
