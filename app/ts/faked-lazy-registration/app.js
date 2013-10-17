@@ -22,6 +22,8 @@ define(["require", "exports", 'appController', 'appService', 'appDirective', 'co
             'inputPromptText',
             'appService',
             'consoleTextService',
+            '$rootScope',
+            '$compile',
             appController.AppController
         ]).config([
             '$provide',

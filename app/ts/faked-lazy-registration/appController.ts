@@ -6,7 +6,9 @@ export class AppController {
                 private $document,
                 private inputPromptText,
                 private appService,
-                private consoleTextService) {
+                private consoleTextService,
+                private $rootScope,
+                private $compile) {
         this.$scope.inputPromptText = inputPromptText;
 
         this.$scope.textLog = [];
@@ -154,8 +156,12 @@ export class AppController {
 
     private loadPluginA = () => {
 
-        require(["pluginA/main"], function(pluginModule) {
+        require(["pluginA/main"], (pluginModule) => {
             pluginModule.init();
+
+            var directiveElement = this.$document[0].getElementById('pluginADirective')
+            this.$compile(directiveElement)(this.$rootScope);
+            this.$rootScope.$digest();
         });
 
         // Make this a one-shot function so it can't be re-invoked

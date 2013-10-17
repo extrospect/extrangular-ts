@@ -2,16 +2,22 @@
 define(["require", "exports"], function(require, exports) {
     // NOTE: When you export a class, the constructor is accessed via <importedModuleVar>.<className>()
     var AppController = (function () {
-        function AppController($scope, $document, inputPromptText, appService, consoleTextService) {
+        function AppController($scope, $document, inputPromptText, appService, consoleTextService, $rootScope, $compile) {
             var _this = this;
             this.$scope = $scope;
             this.$document = $document;
             this.inputPromptText = inputPromptText;
             this.appService = appService;
             this.consoleTextService = consoleTextService;
+            this.$rootScope = $rootScope;
+            this.$compile = $compile;
             this.loadPluginA = function () {
                 require(["pluginA/main"], function (pluginModule) {
                     pluginModule.init();
+
+                    var directiveElement = _this.$document[0].getElementById('pluginADirective');
+                    _this.$compile(directiveElement)(_this.$rootScope);
+                    _this.$rootScope.$digest();
                 });
 
                 // Make this a one-shot function so it can't be re-invoked

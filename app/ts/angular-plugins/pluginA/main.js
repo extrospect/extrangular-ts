@@ -5,8 +5,9 @@ define(["require", "exports", 'pluginA/Services/serviceA', 'pluginA/pluginADirec
     var pluginADirective = __pluginADirective__;
     function init() {
         angular.module('pluginA', []).factory('pluginAServiceA', ['consoleTextService', serviceA.PluginAServiceA]).directive('pluginADirective', [
-            function () {
-                return new pluginADirective.PluginADirective();
+            'consoleTextService',
+            function (consoleTextService) {
+                return new pluginADirective.PluginADirective(consoleTextService);
             }
         ]);
 
@@ -19,7 +20,8 @@ define(["require", "exports", 'pluginA/Services/serviceA', 'pluginA/pluginADirec
         // Optionally, use the injector to trigger a re-compile and digest on the application/document
         $injector.invoke(function ($rootScope, $compile, $document) {
             // IMPORTANT: Compile clears all data from the DOM/scopes it processes
-            $compile($document)($rootScope);
+            var directiveElement = $document[0].getElementById('pluginADirective');
+            $compile(directiveElement)($rootScope);
             $rootScope.$digest();
         });
         /*

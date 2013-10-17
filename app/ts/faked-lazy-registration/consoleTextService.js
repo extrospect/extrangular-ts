@@ -7,7 +7,9 @@ define(["require", "exports"], function(require, exports) {
         ConsoleTextService.prototype.writeLine = function (text) {
             var i = 0, len = this.listeners.length;
             for (; i < len; i++) {
-                this.listeners[i].fn.call(this.listeners[i].scope || this, text);
+                if (this.listeners[i].fn.call(this.listeners[i].scope || this, text) === false) {
+                    break;
+                }
             }
         };
         ConsoleTextService.prototype.addListener = function (listener, scope) {

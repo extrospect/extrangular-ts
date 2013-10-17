@@ -6,7 +6,9 @@ export class ConsoleTextService {
         var i = 0,
             len = this.listeners.length;
         for(; i < len; i++) {
-            this.listeners[i].fn.call(this.listeners[i].scope || this, text);
+            if(this.listeners[i].fn.call(this.listeners[i].scope || this, text) === false) {
+                break;
+            }
         }
     }
     public addListener(listener, scope?) {

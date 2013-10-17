@@ -27,6 +27,8 @@ export function start() {
             'inputPromptText',
             'appService',
             'consoleTextService',
+            '$rootScope',
+            '$compile',
             appController.AppController])
         // TODO: $routeProvider is being left out of this demo
         .config(['$provide',

@@ -6,11 +6,11 @@ import pluginADirective = require('pluginA/pluginADirective');
 export function init() {
     angular.module('pluginA', [])
         .factory('pluginAServiceA', ['consoleTextService', serviceA.PluginAServiceA])
-        .directive('pluginADirective', [function() {
-            return new pluginADirective.PluginADirective();
+        .directive('pluginADirective', ['consoleTextService', function(consoleTextService) {
+            return new pluginADirective.PluginADirective(consoleTextService);
         }]);
 
-
+/*
     // NOTE: Declare a dependency from the main app module to this late loaded module
     angular.module('testApp').requires = angular.module('testApp').requires.concat(['pluginA']);
 
@@ -20,10 +20,11 @@ export function init() {
     // Optionally, use the injector to trigger a re-compile and digest on the application/document
     $injector.invoke(function($rootScope, $compile, $document){
         // IMPORTANT: Compile clears all data from the DOM/scopes it processes
-        $compile($document)($rootScope);
+        var directiveElement = $document[0].getElementById('pluginADirective')
+        $compile(directiveElement)($rootScope);
         $rootScope.$digest();
     });
-
+*/
 /*
     var myServiceA = $injector.get('consoleTextService');
     if(myServiceA) {
