@@ -16,6 +16,13 @@ export class AppController {
         this.$scope.currentCommand = '';
         this.$scope.currentCommandBackup = '';
 
+        $document.bind("keydown keypress", function(event){
+            if( event.keyCode === 8 ) {
+                // Stop browser navigating back
+                event.preventDefault();
+            }
+        });
+
         $document.bind('keydown', (event) => {
             var keyCode = event.keyCode,
                 keyChar = String.fromCharCode(event.keyCode),
@@ -37,8 +44,6 @@ export class AppController {
                             commandModification = function() {
                                 this.$scope.currentCommand = this.$scope.currentCommand.slice(0, -1);
                             };
-                            // Stop browser navigating back
-                            event.preventDefault();
                             break;
                         case 32:
                             // Space

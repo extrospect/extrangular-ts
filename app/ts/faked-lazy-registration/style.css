@@ -1,0 +1,37 @@
+body {
+    background: #000A00;
+    color: #33EE33;
+    font-family: "courier";
+    font-size: 14px;
+    font-weight: bold;
+}
+
+input {
+    background: #000A00;
+    color: #33EE33;
+    border: none;
+    font-family: "courier";
+    font-size: 14px;
+    font-weight: bold;
+}
+
+@keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+@-webkit-keyframes blink {
+    to {
+        visibility: hidden;
+    }
+}
+.blink {
+    background: #33EE33;
+    -webkit-animation: blink 1.0s steps(5, start) infinite;
+    -moz-animation: blink 1.0s steps(5, start) infinite;
+    animation: blink 1.0s steps(5, start) infinite;
+}
+
+.consoleText {
+    white-space: pre;
+}

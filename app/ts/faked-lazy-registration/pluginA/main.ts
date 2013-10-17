@@ -10,6 +10,7 @@ export function init() {
             return new pluginADirective.PluginADirective();
         }]);
 
+
     // NOTE: Declare a dependency from the main app module to this late loaded module
     angular.module('testApp').requires = angular.module('testApp').requires.concat(['pluginA']);
 
@@ -22,6 +23,7 @@ export function init() {
         $compile($document)($rootScope);
         $rootScope.$digest();
     });
+
 /*
     var myServiceA = $injector.get('consoleTextService');
     if(myServiceA) {
