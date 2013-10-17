@@ -1,3 +1,8 @@
-/**
- * Created by Jonathan.Hall on 16/10/13.
- */
+export class PluginAServiceA {
+    constructor(private consoleTextService) {
+    }
+
+    public writeMessage(msg) {
+        this.consoleTextService.writeLine(msg);
+    }
+}
