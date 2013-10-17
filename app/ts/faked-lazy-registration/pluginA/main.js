@@ -10,29 +10,6 @@ define(["require", "exports", 'pluginA/Services/serviceA', 'pluginA/pluginADirec
                 return new pluginADirective.PluginADirective(consoleTextService);
             }
         ]);
-        /*
-        // NOTE: Declare a dependency from the main app module to this late loaded module
-        angular.module('testApp').requires = angular.module('testApp').requires.concat(['pluginA']);
-        
-        // NOTE: Create an injector for the late-loading module ('ng' must ALWAYS be the first module listed in angular.injector)
-        var $injector = angular.injector(['ng', 'testApp']);
-        
-        // Optionally, use the injector to trigger a re-compile and digest on the application/document
-        $injector.invoke(function($rootScope, $compile, $document){
-        // IMPORTANT: Compile clears all data from the DOM/scopes it processes
-        var directiveElement = $document[0].getElementById('pluginADirective')
-        $compile(directiveElement)($rootScope);
-        $rootScope.$digest();
-        });
-        */
-        /*
-        var myServiceA = $injector.get('consoleTextService');
-        if(myServiceA) {
-        myServiceA.writeLine('Plugin A loaded OK!');
-        myServiceA.writeLine('Plugin A - Service A registered OK!');
-        } else {
-        throw 'Unable to retrieve Plugin A Service A!';
-        }*/
     }
     exports.init = init;
 });

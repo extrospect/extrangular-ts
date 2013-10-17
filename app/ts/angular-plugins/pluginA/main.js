@@ -24,14 +24,6 @@ define(["require", "exports", 'pluginA/Services/serviceA', 'pluginA/pluginADirec
             $compile(directiveElement)($rootScope);
             $rootScope.$digest();
         });
-        /*
-        var myServiceA = $injector.get('consoleTextService');
-        if(myServiceA) {
-        myServiceA.writeLine('Plugin A loaded OK!');
-        myServiceA.writeLine('Plugin A - Service A registered OK!');
-        } else {
-        throw 'Unable to retrieve Plugin A Service A!';
-        }*/
     }
     exports.init = init;
 });
